@@ -1,8 +1,32 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 const AppContext = createContext();
 
-const BASE_URL = "https://forkify-api.jonas.io/api/v2/recipes";
+const BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+
+function normalizeMeal(meal) {
+  const ingredients = [];
+  for (let i = 1; i <= 20; i++) {
+    const ingredient = meal[`strIngredient${i}`];
+    const measure = meal[`strMeasure${i}`];
+    if (ingredient && ingredient.trim()) {
+      ingredients.push({ quantity: measure?.trim() || "", ingredient: ingredient.trim() });
+    }
+  }
+  return {
+    id: meal.idMeal,
+    title: meal.strMeal,
+    image_url: meal.strMealThumb,
+    publisher: meal.strArea || meal.strCategory,
+    category: meal.strCategory,
+    area: meal.strArea,
+    instructions: meal.strInstructions,
+    ingredients,
+    source_url: meal.strSource,
+    youtube_url: meal.strYoutube,
+    tags: meal.strTags,
+  };
+}
 
 export function AppProvider({ children }) {
   const [searchQuery, setSearchQuery] = useState("pizza");
@@ -19,35 +43,38 @@ export function AppProvider({ children }) {
     localStorage.setItem("favourites", JSON.stringify(favourites));
   }, [favourites]);
 
-  async function fetchRecipes(query) {
+  const fetchRecipes = useCallback(async function fetchRecipes(query) {
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetch(`${BASE_URL}?search=${query}`);
+      const res = await fetch(`${BASE_URL}/search.php?s=${query}`);
+      if (!res.ok) throw new Error("Something went wrong with fetching recipes");
       const data = await res.json();
-      if (data.results === 0) throw new Error("No recipes found");
-      setRecipes(data.data.recipes);
+      if (!data.meals) throw new Error("No recipes found");
+      setRecipes(data.meals.map(normalizeMeal));
     } catch (err) {
       setError(err.message);
       setRecipes([]);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function fetchRecipe(id) {
+  const fetchRecipe = useCallback(async function fetchRecipe(id) {
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetch(`${BASE_URL}/${id}`);
+      const res = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
+      if (!res.ok) throw new Error("Something went wrong with fetching recipe");
       const data = await res.json();
-      setSelectedRecipe(data.data.recipe);
+      if (!data.meals?.[0]) throw new Error("Recipe not found");
+      setSelectedRecipe(normalizeMeal(data.meals[0]));
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
   function toggleFavourite(recipe) {
     setFavourites((prev) => {

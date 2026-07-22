@@ -79,14 +79,14 @@ export default function RecipeDetail() {
 
           {/* Info Badges */}
           <div className="flex flex-wrap gap-3 mb-8">
-            {recipe.cooking_time && (
+            {recipe.area && (
               <span className="px-4 py-2 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium">
-                ⏱ {recipe.cooking_time} min
+                🌍 {recipe.area}
               </span>
             )}
-            {recipe.servings && (
+            {recipe.category && (
               <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
-                👥 {recipe.servings} servings
+                📂 {recipe.category}
               </span>
             )}
             {recipe.publisher && (
@@ -110,8 +110,7 @@ export default function RecipeDetail() {
                   <span className="text-orange-500 mt-0.5">✓</span>
                   <span className="text-gray-700 text-sm leading-relaxed">
                     {ing.quantity ? `${ing.quantity} ` : ""}
-                    {ing.unit ? `${ing.unit} ` : ""}
-                    {ing.description}
+                    {ing.ingredient}
                   </span>
                 </div>
               ))}

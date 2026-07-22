@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import Recipe from "../components/Recipe";
 
-const QUICK_SEARCHES = ["Pizza", "Pasta", "Chicken", "Beef", "Salmon", "Soup"];
+const QUICK_SEARCHES = ["Chicken", "Pasta", "Beef", "Salmon", "Rice", "Egg"];
 
 export default function Home() {
   const { searchQuery, setSearchQuery, recipes, isLoading, error, fetchRecipes } =
