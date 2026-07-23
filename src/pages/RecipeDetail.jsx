@@ -45,7 +45,7 @@ export default function RecipeDetail() {
           alt={recipe.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
         <Link
           to="/"
           className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition-colors"
